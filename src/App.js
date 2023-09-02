@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import { Container ,Row, Col ,Table ,InputGroup ,Form,Button } from 'react-bootstrap'
 import Pagination from './Pagination';
+import axios from 'axios';
 
 
 const App = () => {
@@ -21,26 +22,30 @@ const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 const currentData = data.slice(indexOfFirstItem, indexOfLastItem);
 
 
-  const fetchdata =()=>{
-    fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json')
-    .then(async(response)=>{
-      const result = await response.json();
-      setData(result)
-      setSearchdata(result)
-    })
-    .catch((error)=>
+  const fetchdata = async()=>{
+    try{
+   const response = await axios.get('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json');
+    setData(response.data);
+    setSearchdata(response.data);
+    }
+    catch(error){
     console.log(error)
-    )
   }
+  };
 
   const handlesearch =(e)=>{
-    if(e.target.value == ""){
+
+    const searchValue = e.target.value.toLowerCase();
+    if(searchValue == ""){
       setData(data)
-      window.location.reload()
     }
     else{
-      const filterresult = searchdata.filter(item=>item.name.toLowerCase().includes(e.target.value.toLowerCase()))
-      setData(filterresult)
+      const filterResult = searchdata.filter((item) =>
+      item.name.toLowerCase().includes(searchValue) ||
+      item.email.toLowerCase().includes(searchValue) ||
+      item.role.toLowerCase().includes(searchValue)
+    );
+      setData(filterResult)
     }
     setFilterdata(e.target.value)
 
@@ -53,7 +58,8 @@ const currentData = data.slice(indexOfFirstItem, indexOfLastItem);
 
   useEffect(()=>{
     fetchdata()
-  },[])
+  },[]);
+
   return (
     <div className='bg-dark'>
      <Container>
