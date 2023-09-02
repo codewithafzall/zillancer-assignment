@@ -18,6 +18,7 @@ const handlePageChange = (pageNumber) => {
  
 const indexOfLastItem = currentPage * itemsPerPage;
 const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentData = data.slice(indexOfFirstItem, indexOfLastItem);
 
 
   const fetchdata =()=>{
@@ -79,7 +80,7 @@ const indexOfFirstItem = indexOfLastItem - itemsPerPage;
                     </thead>
                     
                     <tbody>
-                    {data.map((item) => {
+                    {currentData.map((item, index) => {
     return (
       <tr key={item.id}>
         <td>{item.name}</td>
